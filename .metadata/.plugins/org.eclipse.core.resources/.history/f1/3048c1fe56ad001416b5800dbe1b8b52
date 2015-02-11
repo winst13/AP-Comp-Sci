@@ -1,0 +1,21 @@
+import java.util.ArrayList;
+
+
+public class Graph 
+{
+	ArrayList<ArrayList<Integer>> adjacency;
+	
+	public Graph(int size)
+	{
+		adjacency = new ArrayList<ArrayList<Integer>>(size);
+		for (int i = 0; i < size; i++)
+		{
+			adjacency.set(i, new ArrayList<Integer>(size));
+		}
+	}
+	
+	public Graph(ArrayList<ArrayList<Integer>> adjacency)
+	{
+		
+	}
+}

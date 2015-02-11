@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;listoffences&apos; in &apos;ElectricFenceList&apos; to &apos;listOfFences&apos;&#x0A;- Original project: &apos;Hivolts&apos;&#x0A;- Original element: &apos;ElectricFenceList.listoffences&apos;&#x0A;- Renamed element: &apos;ElectricFenceList.listOfFences&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;listoffences&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;{ElectricFenceList.java[ElectricFenceList^listoffences" name="listOfFences" references="true" setter="false" stamp="1412007577058" textual="false" version="1.0"/>
+</session>

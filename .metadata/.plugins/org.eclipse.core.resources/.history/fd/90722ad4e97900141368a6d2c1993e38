@@ -1,0 +1,218 @@
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import au.com.bytecode.opencsv.CSVReader;
+
+/**
+ * This is the new fitting method that I am programming
+ * It takes 5 points and forces a fit.  It then averages all the
+ * fitted data, returning the mean, standard deviation, and the
+ * sample size
+ * @author winst13
+ *
+ */
+public class SampleFit 
+{
+	public double lambda = 0.000000000004336;
+	public double a = 0.00000001406;
+	public double d = 0.00000015073;
+	
+	public double founda = 0;
+	public double foundd = 0;
+	
+	public double meanV = 0;
+	public double stdevV = 0;
+	
+	public ArrayList<Double> theta = new ArrayList<Double>();
+	public ArrayList<Double> yvals = new ArrayList<Double>();
+	
+	public static final int A_ITERATIONS = 200;
+	public static final int D_ITERATIONS = 200;
+	public static final int V_ITERATIONS = 200;
+	public static final double A_ERROR = 0.1;
+	public static final double D_ERROR = 0.2;
+	public static final double V_ERROR = 0.01;
+	
+	/**
+	 * This is the main method that executes the 
+	 * @param args
+	 */
+	public static void main(String args[])
+	{
+		try
+		{
+			SampleFit myfit = new SampleFit(YoungFit.expfilename);
+			System.out.println("Mean of V:  "+myfit.meanV);
+			System.out.println("Stdev of V:  "+myfit.stdevV);
+			System.out.println("A:  "+myfit.founda);
+			System.out.println("D:  "+myfit.foundd);
+			System.out.println("");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public SampleFit(String expfilename) throws IOException
+	{
+		CSVReader reader = new CSVReader(new FileReader(expfilename));
+	    String[] nextLine;
+	    while ((nextLine = reader.readNext()) != null) 
+		{
+	    	// nextLine[] is an array of values from the line
+	    	Double addition = Double.parseDouble(nextLine[0]);
+	    	theta.add(addition);		
+	    	//System.out.println(addition);
+	    	yvals.add(Double.parseDouble(nextLine[3]));
+		}
+	    reader.close();
+	    
+	    //fitAD();
+	    fit();
+	}
+	
+	public void fitAD()
+	{
+		double currenta = 0.00000001406;
+		double currentd = 0.00000015073;
+		double founddistance = Double.MAX_VALUE;
+		for (int i = 0; i<A_ITERATIONS; i++)
+		{
+			if (i%2 == 0)
+			{
+				currenta = currenta-i*A_ERROR;
+			}
+			else
+			{
+				currenta = currenta+i*A_ERROR;
+			}
+			for (int j = 0; j<D_ITERATIONS; j++)
+			{
+				if (i%2 == 0)
+				{
+					currentd = currentd-j*D_ERROR;
+				}
+				else
+				{
+					currentd = currentd+j*D_ERROR;
+				}
+				
+				fit();
+				
+				double distance = calculateAveDistance(a,d,meanV);
+				if (distance<founddistance)
+				{
+					founda=currenta;
+					foundd=currentd;
+					founddistance = distance;
+				}
+			}
+		}
+	}
+	
+	public double calculateAveDistance(double a, double d, double V)
+	{
+		double totalDist = 0;
+		for (int i = 0; i<theta.size(); i++)
+		{
+			totalDist = totalDist + calculateDistance(a, d, V, theta.get(i));
+		}
+		double ave = totalDist/theta.size();
+		return ave;
+	}
+	
+	public double calculateDistance(double a, double d, double V, double theta)
+	{
+		double retval = 0;
+		double firstterm = Math.pow(Math.sin(Math.PI*a*0.000000009*theta)/
+				(Math.PI*a*0.000000009*theta), 2);
+		double secondterm = 1+V*Math.cos(2*Math.PI*d*0.000000009*theta);
+		retval=firstterm*secondterm;
+		if ( Double.isNaN(retval))
+		{
+			return 0;
+		}
+		return retval;
+	}
+	
+	public void fit()
+	{
+		double totV = 0;
+		for(int i = 0; i < theta.size(); i++)
+		{
+			double addition = solveYoung(yvals.get(i), theta.get(i));
+			totV = totV + addition;
+			//System.out.println(addition);
+			//System.out.println(totV);
+		}
+		//System.out.println("............................"+totV);
+		meanV = totV/(theta.size());
+		double totDiffVSquare = 0;
+		for(int i = 0; i < theta.size(); i++)
+		{
+			double diff = solveYoung(yvals.get(i), theta.get(i))-meanV;
+			totDiffVSquare = totDiffVSquare + Math.pow(diff,2);
+		}
+		stdevV = Math.sqrt(totDiffVSquare/(theta.size()-1));
+	}
+	
+	/**
+	 * returns V value
+	 * @return
+	 */
+	public double solveYoung(double y, double theta)
+	{
+		double inside1 = Math.PI*a*theta/lambda;
+		//System.out.println(inside1);
+		double part1 = Math.sin(inside1)/inside1;
+		//System.out.println(part1);
+		double part2 = y/(Math.pow(part1, 2))-1;
+		//System.out.println(part2);
+		double inside2 = 2*Math.PI*d*theta/lambda;
+		//System.out.println(inside2);
+		double part3 = Math.cos(inside2);
+		//System.out.println(part3);
+		double v = part2/part3;
+		//System.out.println(v);
+		if (theta==0)
+		{
+			return 1;
+		}
+		return v;
+	}
+/*	
+	public ArrayList<Integer> sample()
+	{
+		Random r = new Random(theta.length-1);
+		ArrayList<Integer> sample = new ArrayList<Integer>();
+		while (sample.size() < 4)
+		{
+			int next = r.nextInt();
+			boolean good = true;
+			for (int i = 0; i < sample.size(); i++)
+			{
+				if (next==sample.get(i))
+				{
+					good = false;
+				}
+			}
+			
+			if (good)
+			{
+				Integer tobeadded = new Integer(next);
+				sample.add(tobeadded);
+			}
+		}
+		
+		//debugging
+		if (sample.size()!=4)
+		{
+			System.out.println("Not 4 elements in sample");
+		}
+		
+		return sample;
+	}*/
+}

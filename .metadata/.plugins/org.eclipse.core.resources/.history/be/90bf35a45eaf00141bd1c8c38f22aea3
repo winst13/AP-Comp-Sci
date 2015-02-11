@@ -1,0 +1,163 @@
+import java.util.*;
+
+public class Dijkstra 
+{
+	private ArrayList<Boolean> visited = new ArrayList<Boolean>();
+	private ArrayList<Integer> distance = new ArrayList<Integer>();
+	private ArrayList<Integer> vertex = new ArrayList<Integer>();
+	private Graph graph;
+	private Integer start;
+	private Integer currentNode;
+	
+	public Dijkstra(Integer start, Graph g)
+	{
+		graph = g;
+		this.start = start;
+		
+		//Checks to make sure the adjacency matrix is square
+		for (int i = 0; i < graph.adjacency.size(); i++)
+		{
+			if (graph.adjacency.size() != graph.adjacency.get(i).size())
+			{
+				System.out.println("Adjacency matrix invalid");
+			}
+		}
+		
+		//Checks to make sure the adjacency matrix doesn't have any negative edge weights
+		for (int i = 0; i < graph.adjacency.size(); i++)
+		{
+			for (int j = 0; j < graph.adjacency.get(i).size(); j++)
+			{
+				if (graph.adjacency.get(i).get(j) < 0)
+				{
+					System.out.println("Contains negative edge weights");
+				}
+			}
+		}
+		
+		//Set values in the visited, distance, and vertex arrays
+		for (int i = 0; i < graph.adjacency.size(); i++)
+		{
+			visited.add(false);
+			vertex.add(null);
+			if (i == start)
+			{
+				distance.add(0);
+			}
+			else
+			{
+				distance.add(Integer.MAX_VALUE);
+			}
+		}
+		
+		//Dijkstra's Algorithm
+		boolean allVisited = false;
+		while (!allVisited)
+		{
+			currentNode = selectMinNode();
+			update();
+			
+			allVisited = true;
+			for (int i = 0; i < visited.size(); i++)
+			{
+				if (!visited.get(i))
+				{
+					allVisited = false;
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * This method uses Dijkstra's algorithm to find the shortest path from one node
+	 * to another.  It returns the path.  If two nodes are not connected, then it should
+	 * be represented in the adjacency matrix as infinite.  I took infinite to be 
+	 * Integer.MAX_VALUE
+	 * @param start
+	 * @param adjacency
+	 * @return
+	 */
+	public ArrayList<Integer> shortestPath(Integer end)
+	{
+		return distance;
+	}
+	
+	public Integer selectMinNode()
+	{
+		Integer mindex = null;
+		for (int i = 0; i < distance.size(); i++)
+		{
+			if (!visited.get(i))
+			{
+				if (mindex == null||distance.get(i)<distance.get(mindex))
+				{
+					mindex = i;
+				}
+			}
+		}
+		
+		//System.out.println("Select Dist"+distance);
+		//System.out.println("Mindex"+mindex);
+		
+		return mindex;
+	}
+	
+	/**
+	 * This method updates all of the distances 
+	 * @param adjacency
+	 */
+	public void update()
+	{
+		//Calculate new values.  As long as not connected means distance = infinity, this
+		//should be fine
+		ArrayList<Integer> newDist = new ArrayList<Integer>();
+		for (int i = 0; i < graph.adjacency.get(currentNode).size(); i++)
+		{
+			if (distance.get(currentNode) != Integer.MAX_VALUE && 
+					graph.adjacency.get(currentNode).get(i) != Integer.MAX_VALUE)
+			{
+				newDist.add(graph.adjacency.get(currentNode).get(i)+distance.get(currentNode));
+			}
+			else
+			{
+				newDist.add(Integer.MAX_VALUE);
+			}
+			//System.out.println(i);
+		}
+		
+		//Compare values, replace if needed
+		for (int i = 0; i < distance.size(); i++)
+		{
+			//System.out.println("Update distance"+distance);
+			//System.out.println("New dist"+newDist);
+			if (distance.get(i)>newDist.get(i))
+			{
+				distance.set(i, newDist.get(i));
+				vertex.set(i, currentNode);
+			}
+		}
+		
+		//Mark currentNode as visited
+		visited.set(currentNode, true);
+	}
+	
+	public Integer getStart()
+	{
+		return start;
+	}
+	
+	public static void main(String args[])
+	{
+		Graph g = new Graph(6);
+		g.biLink(0, 1, 1);
+		g.biLink(2, 0, 3);
+		g.biLink(3, 4, 5);
+		g.biLink(0, 4, 7);
+		g.biLink(1, 3, 9);
+		g.printGraph();
+		
+		Dijkstra d = new Dijkstra(0, g);
+		System.out.println(d.shortestPath(4));
+	}
+}

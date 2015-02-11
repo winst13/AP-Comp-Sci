@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;rref&apos; in &apos;Matrix.ref(...)&apos; to &apos;ref&apos;&#x0A;- Original project: &apos;GeneralizedFibonacci&apos;&#x0A;- Original element: &apos;Matrix.ref(double[][]).rref&apos;&#x0A;- Renamed element: &apos;rref&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;rref&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;{Matrix.java[Matrix~ref~\[\[D@rref!818!873!829!832!\[\[D!0!false" name="ref" references="true" stamp="1414829526337" version="1.0"/>
+</session>

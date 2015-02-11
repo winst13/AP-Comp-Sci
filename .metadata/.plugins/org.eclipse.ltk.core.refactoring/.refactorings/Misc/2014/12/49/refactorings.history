@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;result&apos; in &apos;Median.recursemedian(...)&apos; to &apos;medians&apos;&#x0A;- Original project: &apos;Misc&apos;&#x0A;- Original element: &apos;Median.recursemedian(int[]).result&apos;&#x0A;- Renamed element: &apos;result&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;result&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;{Median.java[Median~recursemedian~\[I@result!714!766!733!738!QArrayList\&lt;QInteger;&gt;;!0!false" name="medians" references="true" stamp="1417711135807" version="1.0"/>
+</session>

@@ -1,0 +1,51 @@
+import java.util.ArrayList;
+
+
+public class Graph 
+{
+	ArrayList<ArrayList<Integer>> adjacency;
+	
+	public Graph(int size)
+	{
+		adjacency = new ArrayList<ArrayList<Integer>>(size);
+		for (int i = 0; i < size; i++)
+		{
+			adjacency.add(new ArrayList<Integer>());
+			for (int j = 0; j < size; j++)
+			{
+				adjacency.get(i).add(Integer.MAX_VALUE);
+			}
+		}
+	}
+	
+	public Graph(ArrayList<ArrayList<Integer>> adjacency)
+	{
+		this.adjacency = adjacency;
+	}
+	
+	public void biLink(Integer node1, Integer node2, Integer length)
+	{
+		uniLink(node1, node2, length);
+		uniLink(node2, node1, length);
+	}
+	
+	public void uniLink(Integer node1, Integer node2, Integer length)
+	{
+		adjacency.get(node1).set(node2, length);
+	}
+	
+	public void printGraph()
+	{
+		System.out.println("Graph:");
+		for (int i = 0; i < adjacency.size(); i++)
+		{
+			for (int j = 0; j < adjacency.get(i).size(); j++)
+			{
+				if (adjacency.get(i).get(j) < Integer.MAX_VALUE)
+				{
+					System.out.println("Node "+i+", Node "+j+", Length "+adjacency.get(i).get(j));
+				}
+			}
+		}
+	}
+}
